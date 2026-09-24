@@ -1,0 +1,203 @@
+[
+  {
+    "id": "table.expenseSplit",
+    "label": "Create table \"expenseSplit\"",
+    "summary": "Creates table \"expenseSplit\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "expenseSplit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"expenseSplit\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"expenseSplit\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"expenseSplit\"",
+        "sql": "CREATE TABLE \"public\".\"expenseSplit\" (\n  \"amount\" int4 NOT NULL,\n  \"expenseId\" int4 NOT NULL,\n  \"userId\" int4 NOT NULL,\n  PRIMARY KEY (\"expenseId\", \"userId\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"expenseSplit\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"expenseSplit\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.expenseSplit.expenseSplit_expenseId_idx_69d413fa",
+    "label": "Create index \"expenseSplit_expenseId_idx_69d413fa\" on \"expenseSplit\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "expenseSplit_expenseId_idx_69d413fa",
+        "table": "expenseSplit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"expenseSplit_expenseId_idx_69d413fa\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"expenseSplit_expenseId_idx_69d413fa\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"expenseSplit_expenseId_idx_69d413fa\"",
+        "sql": "CREATE INDEX \"expenseSplit_expenseId_idx_69d413fa\" ON \"public\".\"expenseSplit\" (\"expenseId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"expenseSplit_expenseId_idx_69d413fa\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"expenseSplit_expenseId_idx_69d413fa\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.expenseSplit.expenseSplit_userId_idx_a489d58a",
+    "label": "Create index \"expenseSplit_userId_idx_a489d58a\" on \"expenseSplit\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "expenseSplit_userId_idx_a489d58a",
+        "table": "expenseSplit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"expenseSplit_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"expenseSplit_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"expenseSplit_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"expenseSplit_userId_idx_a489d58a\" ON \"public\".\"expenseSplit\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"expenseSplit_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"expenseSplit_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.expenseSplit.expenseSplit_expenseId_fkey",
+    "label": "Add foreign key \"expenseSplit_expenseId_fkey\" on \"expenseSplit\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "expenseSplit_expenseId_fkey",
+        "table": "expenseSplit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"expenseSplit_expenseId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "expenseSplit_expenseId_fkey",
+          "public",
+          "\"public\".\"expenseSplit\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"expenseSplit_expenseId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"expenseSplit\"\nADD CONSTRAINT \"expenseSplit_expenseId_fkey\"\nFOREIGN KEY (\"expenseId\")\nREFERENCES \"public\".\"expense\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"expenseSplit_expenseId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "expenseSplit_expenseId_fkey",
+          "public",
+          "\"public\".\"expenseSplit\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.expenseSplit.expenseSplit_userId_fkey",
+    "label": "Add foreign key \"expenseSplit_userId_fkey\" on \"expenseSplit\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "expenseSplit_userId_fkey",
+        "table": "expenseSplit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"expenseSplit_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "expenseSplit_userId_fkey",
+          "public",
+          "\"public\".\"expenseSplit\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"expenseSplit_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"expenseSplit\"\nADD CONSTRAINT \"expenseSplit_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"expenseSplit_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "expenseSplit_userId_fkey",
+          "public",
+          "\"public\".\"expenseSplit\""
+        ]
+      }
+    ]
+  }
+]

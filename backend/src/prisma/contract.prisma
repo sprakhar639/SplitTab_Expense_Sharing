@@ -10,6 +10,7 @@ model User {
 
   groupMembers GroupMember[]
   expensesPaid Expense[]
+  splits ExpenseSplit[]
 }
 
 model Group {
@@ -41,4 +42,16 @@ model Expense{
 
   group Group @relation(fields:[groupId],references:[id])
   payer User @relation(fields:[paidBy],references:[id])
+  splits ExpenseSplit[]
+}
+
+model ExpenseSplit{
+   expenseId Int
+   userId  Int
+   amount Int
+
+   expense Expense @relation(fields: [expenseId],references:[id])
+   user User @relation(fields: [userId],references:[id])
+  
+   @@id([expenseId,userId])
 }

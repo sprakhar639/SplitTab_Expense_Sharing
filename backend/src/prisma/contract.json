@@ -8,6 +8,10 @@
       "model": "Expense",
       "namespace": "public"
     },
+    "expenseSplit": {
+      "model": "ExpenseSplit",
+      "namespace": "public"
+    },
     "group": {
       "model": "Group",
       "namespace": "public"
@@ -102,6 +106,21 @@
                   "model": "User",
                   "namespace": "public"
                 }
+              },
+              "splits": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "expenseId"
+                  ]
+                },
+                "to": {
+                  "model": "ExpenseSplit",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
@@ -127,6 +146,80 @@
               },
               "namespaceId": "public",
               "table": "expense"
+            }
+          },
+          "ExpenseSplit": {
+            "fields": {
+              "amount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "expenseId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "expense": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "expenseId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Expense",
+                  "namespace": "public"
+                }
+              },
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "amount": {
+                  "column": "amount"
+                },
+                "expenseId": {
+                  "column": "expenseId"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "expenseSplit"
             }
           },
           "Group": {
@@ -360,6 +453,21 @@
                   "model": "GroupMember",
                   "namespace": "public"
                 }
+              },
+              "splits": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "ExpenseSplit",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
@@ -492,6 +600,84 @@
               "primaryKey": {
                 "columns": [
                   "id"
+                ]
+              },
+              "uniques": []
+            },
+            "expenseSplit": {
+              "columns": {
+                "amount": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "expenseId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "expenseId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "expenseSplit"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "expense"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "expenseSplit"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "expenseId"
+                  ],
+                  "name": "expenseSplit_expenseId_idx_69d413fa",
+                  "prefix": "expenseSplit_expenseId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "expenseSplit_userId_idx_a489d58a",
+                  "prefix": "expenseSplit_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "expenseId",
+                  "userId"
                 ]
               },
               "uniques": []
@@ -685,7 +871,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "487d913a089c798507eb478acbe79c55ff5faf0bd108a9ffd256414d4bb2e37e"
+    "storageHash": "872f945a55d588407a7bca4770577e26958a545dec26224d1cf5a6c19989d609"
   },
   "execution": {
     "executionHash": "cf01482f6c01da48d275be4544619ae0bf818eb2080c9b47d7ddb7196ad715fe",
