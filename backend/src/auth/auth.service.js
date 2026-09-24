@@ -21,6 +21,16 @@ async function login({ identifier, password }) {
   const user = await db.orm.public.User.where((u) =>
     or(u.email.eq(identifier), u.username.eq(identifier)),
   ).first();
+
+  if (!user) {
+    throw new Error("User Not Found");
+  }
+
+  const passwordMatch = await bcrpyt.compare(password, user.passwordHash);
+
+  if(!passwordMatch){
+    throw new Error("Wrong Password")
+  }
   return user;
 }
 
