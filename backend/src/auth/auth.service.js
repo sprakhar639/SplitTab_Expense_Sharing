@@ -6,12 +6,10 @@ async function register({ username, email, password, name }) {
   try {
     const passwordHash = await bcrpyt.hash(password, 10);
     const user = await db.orm.public.User.create({
-      data: {
         email,
         username,
         name,
-        passwordHash,
-      },
+        passwordHash
     });
     return user;
   } catch (error) {
