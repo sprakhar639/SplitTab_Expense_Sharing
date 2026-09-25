@@ -1,5 +1,4 @@
-import createGroup from '../groups/groups.service.js'
-
+import {createGroup,addMember} from '../groups/groups.service.js'
 
 async function create(req,res){
     try{
@@ -16,4 +15,25 @@ async function create(req,res){
     }
 }
 
-export default create;
+async function addGroupMember(req,res){
+    try{
+        const {groupId} =req.params;
+        const {userId} =req.body;
+
+        const member=await addMember({
+            groupId,
+            userId
+        })
+        return res.status(201).json({
+            message:"Member added successfully",member
+        })
+    }catch(error){
+        console.error(error)
+            console.error("Add member error",error);
+            return res.status(500).json({
+                message:"Failed to add member",
+            })
+        }
+    }
+
+export {create,addGroupMember};
