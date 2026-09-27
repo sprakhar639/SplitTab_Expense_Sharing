@@ -1,4 +1,4 @@
-import {addExpense} from '../expenses/expense.service.js'
+import {addExpense,splitExpense} from '../expenses/expense.service.js'
 
 
 async function addExpenseInGroup(req,res){
@@ -15,4 +15,26 @@ try{
 }
 }
 
-export {addExpenseInGroup}
+
+async function splitExpenseController(req,res){
+try{
+    const {expenseId}=req.params;
+    const {userIds}=req.body
+    
+    const splits=await splitExpense({
+        expenseId,userIds
+    })
+    return res.status(201).json({
+      message: "Expense split successfully",
+      splits
+    });
+}catch(error){
+     console.error("SPLIT ERROR:", error);
+
+ return res.status(404).json({
+      message: "Expense split failed"
+    });
+}
+}
+
+export {addExpenseInGroup,splitExpenseController}
