@@ -1,4 +1,4 @@
-import prisma from '../prisma/db.ts'
+import prisma from '../src/prisma/db.ts'
 
 async function connectDB(){
     try{

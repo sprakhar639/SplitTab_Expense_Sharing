@@ -61,3 +61,16 @@ model ExpenseSplit{
    @@id([expenseId,userId])
    @@map("expense_splits")
 }
+
+model Settlement{
+  id Int @id @default(autoincrement())
+  groupId Int
+  fromUserId Int
+  toUserId Int
+  amount Int
+  createdAt TimestamptzString @default(now())
+
+  group Group @relation(fields:[groupId],references:[id])
+  from User @relation("SettlementFrom",fields:[fromUserId],references:[id])
+  to User @relation("SettlementTo",fields:[toUserId],references:[id])
+}

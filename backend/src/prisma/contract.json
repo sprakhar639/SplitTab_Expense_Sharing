@@ -20,6 +20,10 @@
       "model": "Group",
       "namespace": "public"
     },
+    "settlement": {
+      "model": "Settlement",
+      "namespace": "public"
+    },
     "users": {
       "model": "User",
       "namespace": "public"
@@ -376,6 +380,126 @@
               },
               "namespaceId": "public",
               "table": "group_members"
+            }
+          },
+          "Settlement": {
+            "fields": {
+              "amount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "fromUserId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "groupId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "toUserId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "from": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "fromUserId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "group": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "groupId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Group",
+                  "namespace": "public"
+                }
+              },
+              "to": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "toUserId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "amount": {
+                  "column": "amount"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "fromUserId": {
+                  "column": "fromUserId"
+                },
+                "groupId": {
+                  "column": "groupId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "toUserId": {
+                  "column": "toUserId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "settlement"
             }
           },
           "User": {
@@ -814,6 +938,130 @@
               },
               "uniques": []
             },
+            "settlement": {
+              "columns": {
+                "amount": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "fromUserId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "groupId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "toUserId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "groupId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "settlement"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "groups"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "fromUserId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "settlement"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "toUserId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "settlement"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "fromUserId"
+                  ],
+                  "name": "settlement_fromUserId_idx_9c2ca0ee",
+                  "prefix": "settlement_fromUserId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "groupId"
+                  ],
+                  "name": "settlement_groupId_idx_e2fb5578",
+                  "prefix": "settlement_groupId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "toUserId"
+                  ],
+                  "name": "settlement_toUserId_idx_397e108f",
+                  "prefix": "settlement_toUserId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "users": {
               "columns": {
                 "createdAt": {
@@ -886,7 +1134,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "ebe07e776fbfa14666439f3c1234fc6442caa537ce2c78c5411a20c3fb096368"
+    "storageHash": "fbf70c5eff3610c2234acbc497be41832df9cd477ae9fd69e583ca77870de244"
   },
   "execution": {
     "executionHash": "8ab922e6a9a536f0e1e59bb344fa0a15110d99153831ec0a0d7c06cc479f6b70",
