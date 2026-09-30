@@ -1,4 +1,8 @@
-import { createSettlementService } from "./settlement.service.js";
+import {
+  createSettlementService,
+  getBalanceService,
+} from "./settlement.service.js";
+
 async function createSettlement(req, res) {
   try {
     const { groupId, fromUserId, toUserId, amount } = req.body;
@@ -11,7 +15,8 @@ async function createSettlement(req, res) {
     });
 
     return res.status(201).json({
-      message: "Settlement created Successfully",settlement
+      message: "Settlement created Successfully",
+      settlement,
     });
   } catch (error) {
     console.error("Settlement Error:", error);
@@ -22,4 +27,19 @@ async function createSettlement(req, res) {
   }
 }
 
-export { createSettlement };
+async function getBalanceController(req, res) {
+  try {
+    const balance = await getBalanceService({
+      groupId: Number(groupId),
+      userId: Number(userId),
+    });
+    return res.status(200).json(balance);
+  } catch (error) {
+    console.error("Balance Error", error);
+    return res.status(500).json({
+      message: "Failed to get Balance",
+    });
+  }
+}
+
+export { createSettlement, getBalanceController };
