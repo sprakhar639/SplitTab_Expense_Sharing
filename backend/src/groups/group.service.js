@@ -6,8 +6,4 @@ async function createGroup({ name }) {
   return group;
 }
 
-async function addMember({ groupId, userId }) {
-  const member = await db.orm.public.GroupMember.create({ groupId, userId });
-  return member;
-}
-export { createGroup, addMember };
+export { createGroup };
