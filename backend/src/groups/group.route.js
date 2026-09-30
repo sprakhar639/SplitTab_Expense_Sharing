@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { create, addGroupMember } from "./group.controller.js";
+import { create} from "./group.controller.js";
 
 const router = Router();
 

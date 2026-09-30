@@ -28,6 +28,7 @@ async function createSettlement(req, res) {
 }
 
 async function getBalanceController(req, res) {
+   const { groupId,userId } = req.params;
   try {
     const balance = await getBalanceService({
       groupId: Number(groupId),
@@ -42,4 +43,7 @@ async function getBalanceController(req, res) {
   }
 }
 
-export { createSettlement, getBalanceController };
+export {createSettlement, getBalanceController};
+
+
+

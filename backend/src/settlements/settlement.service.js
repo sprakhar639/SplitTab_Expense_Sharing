@@ -1,5 +1,5 @@
 import db from "../prisma/db.ts";
-
+import {and} from  "@prisma/orm-postgres/orm-client"
 async function createSettlementService({
   groupId,
   fromUserId,
@@ -24,17 +24,17 @@ async function getBalanceService({ groupId, userId }) {
   let owed = 0;
 
   for (const expense of expenses) {
-    const spilt = await db.orm.public.ExpenseSplit.where((s) =>
-      s.expenseId.eq.apply(expense.id).and(s.userId.eq(userId)),
+    const split = await db.orm.public.ExpenseSplit.where((s) =>
+      and(s.expenseId.eq(expense.id),s.userId.eq(userId)),
     ).first();
 
     if (split) {
-      owed += spilt.amount;
+      owed += split.amount;
     }
   }
 
   const settlements = await db.orm.public.Settlement.where((s) =>
-    s.groupId.eq(groupId).and(s.fromUserId.eq(userId)),
+    and(s.groupId.eq(groupId),s.fromUserId.eq(userId))
   ).all();
 
   let paid = 0;
