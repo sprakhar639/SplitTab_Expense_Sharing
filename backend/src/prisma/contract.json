@@ -12,10 +12,6 @@
       "model": "Expense",
       "namespace": "public"
     },
-    "group_members": {
-      "model": "GroupMember",
-      "namespace": "public"
-    },
     "groups": {
       "model": "Group",
       "namespace": "public"
@@ -272,21 +268,6 @@
                   "model": "Expense",
                   "namespace": "public"
                 }
-              },
-              "members": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "groupId"
-                  ]
-                },
-                "to": {
-                  "model": "GroupMember",
-                  "namespace": "public"
-                }
               }
             },
             "storage": {
@@ -306,80 +287,6 @@
               },
               "namespaceId": "public",
               "table": "groups"
-            }
-          },
-          "GroupMember": {
-            "fields": {
-              "groupId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "joinedAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "userId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "group": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "groupId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Group",
-                  "namespace": "public"
-                }
-              },
-              "user": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "userId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "User",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "groupId": {
-                  "column": "groupId"
-                },
-                "joinedAt": {
-                  "column": "joinedAt"
-                },
-                "userId": {
-                  "column": "userId"
-                }
-              },
-              "namespaceId": "public",
-              "table": "group_members"
             }
           },
           "Settlement": {
@@ -567,21 +474,6 @@
                 },
                 "to": {
                   "model": "Expense",
-                  "namespace": "public"
-                }
-              },
-              "groupMembers": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "userId"
-                  ]
-                },
-                "to": {
-                  "model": "GroupMember",
                   "namespace": "public"
                 }
               },
@@ -812,88 +704,6 @@
               "primaryKey": {
                 "columns": [
                   "id"
-                ]
-              },
-              "uniques": []
-            },
-            "group_members": {
-              "columns": {
-                "groupId": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "joinedAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                },
-                "userId": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "source": {
-                    "columns": [
-                      "groupId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "group_members"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "groups"
-                  }
-                },
-                {
-                  "source": {
-                    "columns": [
-                      "userId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "group_members"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "users"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "groupId"
-                  ],
-                  "name": "group_members_groupId_idx_e2fb5578",
-                  "prefix": "group_members_groupId_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "userId"
-                  ],
-                  "name": "group_members_userId_idx_a489d58a",
-                  "prefix": "group_members_userId_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "groupId",
-                  "userId"
                 ]
               },
               "uniques": []
@@ -1134,7 +944,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "fbf70c5eff3610c2234acbc497be41832df9cd477ae9fd69e583ca77870de244"
+    "storageHash": "fd497a80f6db6cc6eb3bfc72c1dc334153e97ab4648c13fc614041c58ba9ea36"
   },
   "execution": {
     "executionHash": "8ab922e6a9a536f0e1e59bb344fa0a15110d99153831ec0a0d7c06cc479f6b70",

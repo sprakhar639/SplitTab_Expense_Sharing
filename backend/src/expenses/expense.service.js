@@ -1,10 +1,11 @@
 import db from "../prisma/db.ts";
 
-async function addExpense({ groupId, amount, paidBy }) {
+async function addExpense({ groupId, amount, paidBy,description }) {
   const expense = await db.orm.public.Expense.create({
     groupId,
     amount,
     paidBy,
+    description
   });
   return expense;
 }

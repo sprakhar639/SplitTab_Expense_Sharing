@@ -4,9 +4,9 @@ import {addExpense,splitExpense} from '../expenses/expense.service.js'
 async function addExpenseInGroup(req,res){
 try{
     const {groupId}=req.params;
-    const {amount,paidBy} =req.body;
+    const {amount,paidBy,description} =req.body;
     const expense =await addExpense({
-        groupId,amount,paidBy
+        groupId,amount,paidBy,description
 })
  return res.status(201).json({message:"Expense added Successfully",expense})
 }catch(error){
