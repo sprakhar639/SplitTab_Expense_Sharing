@@ -9,6 +9,7 @@ model User {
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
 
+  sessions Session[]
   expensesPaid Expense[]
   splits ExpenseSplit[]
   @@map("users")
@@ -61,4 +62,15 @@ model Settlement{
   group Group @relation(fields:[groupId],references:[id])
   from User @relation("SettlementFrom",fields:[fromUserId],references:[id])
   to User @relation("SettlementTo",fields:[toUserId],references:[id])
+}
+
+
+model Session {
+  id    String  @id @default(uuid())
+  userId   Int
+  createdAt TimestamptzString  @default(now())
+  expiresAt TimestamptzString  
+
+  user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+  @@map("sessions")
 }
