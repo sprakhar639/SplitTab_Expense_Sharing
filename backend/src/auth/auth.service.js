@@ -11,7 +11,13 @@ async function register({ username, email, password, name }) {
       name,
       passwordHash,
     });
-    return user;
+
+    const session = await db.orm.public.Session.create({
+      userId:user.id,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+
+    return { user, session };
   } catch (error) {
     console.error("error message", error);
   }
@@ -28,8 +34,8 @@ async function login({ identifier, password }) {
 
   const passwordMatch = await bcrpyt.compare(password, user.passwordHash);
 
-  if(!passwordMatch){
-    throw new Error("Wrong Password")
+  if (!passwordMatch) {
+    throw new Error("Wrong Password");
   }
   return user;
 }
