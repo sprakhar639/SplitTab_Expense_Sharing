@@ -1,13 +1,15 @@
 import express from 'express'
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
 import authRoute from './auth/auth.route.js'
 import groupRoute from './groups/group.route.js'
 import expenseRoute from './expenses/expense.route.js'
 import settlementRoute from './settlements/settlement.route.js'
-import cors from 'cors'
 
 const app=express()
 
 app.use(express.json())
+app.use(cookieParser())
 app.use(cors({origin:"http://localhost:5173",credentials:true}))
 
 app.use('/api/auth',authRoute)

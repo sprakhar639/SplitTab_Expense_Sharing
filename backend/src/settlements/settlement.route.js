@@ -7,3 +7,4 @@ route.post('/',createSettlement);
 route.get('/balance/:groupId/:userId',getBalanceController)
 
 export default route
+

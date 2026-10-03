@@ -68,6 +68,7 @@ model Settlement{
 model Session {
   id    String  @id @default(uuid())
   userId   Int
+  tokenHash String @unique
   createdAt TimestamptzString  @default(now())
   expiresAt TimestamptzString  
 

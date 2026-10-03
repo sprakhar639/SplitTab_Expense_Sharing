@@ -1,4 +1,5 @@
 import bcrpyt from "bcrypt";
+import crypto from "crypto"
 import db from "../prisma/db.ts";
 import { or } from "@prisma/orm-postgres/orm-client";
 
@@ -12,18 +13,25 @@ async function register({ username, email, password, name }) {
       passwordHash,
     });
 
+  const sessionToken=crypto.randomBytes(32).toString("hex");
+  const tokenHash=crypto.createHash("sha256").update(sessionToken).digest("hex");
+
     const session = await db.orm.public.Session.create({
       userId:user.id,
+      tokenHash,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
-    return { user, session };
+   
+
+    return { user, sessionToken };
   } catch (error) {
     console.error("error message", error);
   }
 }
 
 async function login({ identifier, password }) {
+  try{
   const user = await db.orm.public.User.where((u) =>
     or(u.email.eq(identifier), u.username.eq(identifier)),
   ).first();
@@ -37,7 +45,21 @@ async function login({ identifier, password }) {
   if (!passwordMatch) {
     throw new Error("Wrong Password");
   }
-  return user;
+
+  const sessionToken=crypto.randomBytes(32).toString("hex");
+  const tokenHash=crypto.createHash("sha256").update(sessionToken).digest("hex");
+
+  const session=await db.orm.public.Session.create({
+    userId:user.id,
+    tokenHash,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  })
+  return {user,sessionToken};
+}
+catch(error){
+  console.error("error",error);
+  throw error;
+}
 }
 
 async function logout() {}
