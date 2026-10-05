@@ -27,7 +27,7 @@ function Login() {
 
     return (
       <div>
-        <h1>Register</h1>
+        <h1>Login</h1>
 
         <form onSubmit={handleSubmit}>
 
@@ -48,7 +48,7 @@ function Login() {
             onChange={handleChange}
           />
 
-          <button type="submit">Register</button>
+          <button type="submit">Login</button>
         </form>
       </div>
     );
