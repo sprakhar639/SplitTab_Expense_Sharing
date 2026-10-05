@@ -10,6 +10,7 @@ model User {
   updatedAt temporal.updatedAtString()
 
   sessions Session[]
+  groupMembers GroupMember[]
   expensesPaid Expense[]
   splits ExpenseSplit[]
   @@map("users")
@@ -20,8 +21,22 @@ model Group {
   name      String
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
+  members GroupMember[]
   expenses Expense[]
   @@map("groups")
+}
+
+model GroupMembers{
+  groupId  Int
+  userId Int
+  role String
+  joinedAt TimestampzString @default(now())
+
+  group Group @relation (fields:[groupId], references:[id])
+  user User @relation (fields:[userId], references:[id])
+  
+  @@id([groupId,userId])
+  @@map("group_members")
 }
 
 
