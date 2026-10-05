@@ -18,6 +18,8 @@ async function authMiddleware(req, res, next) {
     if(new Date()>session.expiresAt){
      return res.status(401).json({message:"Session Expired"})
     }
+
+    req.user={id:session.userId};
     next();
   } catch (error) {
     console.error("Error:", error);
