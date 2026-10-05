@@ -1,10 +1,11 @@
 import {Router} from 'express'
 import {createSettlement,getBalanceController} from './settlement.controller.js'
+import authMiddleware from '../middleware/auth.middleware.js';
 
 const route=Router();
 
-route.post('/',createSettlement);
-route.get('/balance/:groupId/:userId',getBalanceController)
+route.post('/',authMiddleware,createSettlement);
+route.get('/balance/:groupId/:userId',authMiddleware,getBalanceController)
 
 export default route
 
