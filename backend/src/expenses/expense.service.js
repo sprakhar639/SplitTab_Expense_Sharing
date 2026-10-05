@@ -1,16 +1,16 @@
 import db from "../prisma/db.ts";
 
-async function addExpense({ groupId, amount, paidBy,description }) {
+async function addExpense({ groupId, amount, paidBy, description }) {
   const expense = await db.orm.public.Expense.create({
     groupId,
     amount,
     paidBy,
-    description
+    description,
   });
   return expense;
 }
 
-async function splitExpense({ expenseId, userIds }) {
+async function splitExpense({ expenseId,groupId, userIds }) {
   const expense = await db.orm.public.Expense.where((e) =>
     e.id.eq(expenseId),
   ).first();
@@ -19,6 +19,9 @@ async function splitExpense({ expenseId, userIds }) {
     throw new Error("Expense Not Found");
   }
 
+  if (expense.groupId !== groupId) {
+    throw new Error("Expense does not belong to this group");
+  }
   const splitAmount = expense.amount / userIds.length;
 
   const splits = [];
