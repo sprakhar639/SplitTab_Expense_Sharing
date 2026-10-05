@@ -26,11 +26,11 @@ model Group {
   @@map("groups")
 }
 
-model GroupMembers{
+model GroupMember{
   groupId  Int
   userId Int
   role String
-  joinedAt TimestampzString @default(now())
+  joinedAt TimestamptzString @default(now())
 
   group Group @relation (fields:[groupId], references:[id])
   user User @relation (fields:[userId], references:[id])
