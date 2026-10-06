@@ -34,7 +34,7 @@ async function splitExpenseController(req, res) {
       splits,
     });
   } catch (error) {
-    console.error("SPLIT ERROR:", error);
+    console.error("Split error:", error);
 
     return res.status(404).json({
       message: "Expense split failed",

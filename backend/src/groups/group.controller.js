@@ -16,6 +16,27 @@ async function create(req, res) {
   }
 }
 
+async function addMemberController(req, res) {
+  try {
+    const { groupId } = req.params;
+    const { userId } = req.body;
 
+    const member = await addMember({
+      groupId: Number(groupId),
+      userId: Number(userId),
+    });
 
-export { create };
+    return res.status(201).json({
+      message: "Member added successfully",
+      member,
+    });
+  } catch (error) {
+    console.error("Add Member Error:", error);
+
+    return res.status(500).json({
+      message: "Failed to add member",
+    });
+  }
+}
+
+export { create,addMemberController };

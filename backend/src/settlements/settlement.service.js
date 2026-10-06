@@ -1,5 +1,5 @@
 import db from "../prisma/db.ts";
-import {and} from  "@prisma/orm-postgres/orm-client"
+import { and } from "@prisma/orm-postgres/orm-client";
 async function createSettlementService({
   groupId,
   fromUserId,
@@ -25,7 +25,7 @@ async function getBalanceService({ groupId, userId }) {
 
   for (const expense of expenses) {
     const split = await db.orm.public.ExpenseSplit.where((s) =>
-      and(s.expenseId.eq(expense.id),s.userId.eq(userId)),
+      and(s.expenseId.eq(expense.id), s.userId.eq(userId)),
     ).first();
 
     if (split) {
@@ -34,7 +34,7 @@ async function getBalanceService({ groupId, userId }) {
   }
 
   const settlements = await db.orm.public.Settlement.where((s) =>
-    and(s.groupId.eq(groupId),s.fromUserId.eq(userId))
+    and(s.groupId.eq(groupId), s.fromUserId.eq(userId)),
   ).all();
 
   let paid = 0;
@@ -50,5 +50,19 @@ async function getBalanceService({ groupId, userId }) {
     remaining,
     settled: remaining <= 0,
   };
+}
+
+async function getGroupSettlement({ groupId }) {
+  const expenses = await db.orm.public.Expense.where((e) =>
+    e.groupId.eq(groupId),
+  ).all();
+
+  for (const expense of expenses) {
+    const splits = await db.orm.public.ExpenseSplit.where((s) =>
+      s.expenseId.eq(expense.id),
+    ).all();
+    console.log(expense);
+    console.log(splits);
+  }
 }
 export { createSettlementService, getBalanceService };
