@@ -19,11 +19,11 @@ async function create(req, res) {
 async function addMemberController(req, res) {
   try {
     const { groupId } = req.params;
-    const { userId } = req.body;
+    const { userIds } = req.body;
 
     const member = await addMember({
       groupId: Number(groupId),
-      userId: Number(userId),
+      userId: userIds,
     });
 
     return res.status(201).json({
