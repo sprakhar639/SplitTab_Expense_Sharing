@@ -10,7 +10,7 @@ async function addExpense({ groupId, amount, paidBy, description }) {
   return expense;
 }
 
-async function splitExpense({ expenseId,groupId, userIds }) {
+async function splitExpense({ expenseId,groupId,userIds}) {
   const expense = await db.orm.public.Expense.where((e) =>
     e.id.eq(expenseId),
   ).first();

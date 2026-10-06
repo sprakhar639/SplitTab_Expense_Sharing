@@ -21,7 +21,7 @@ async function addExpenseInGroup(req, res) {
 
 async function splitExpenseController(req, res) {
   try {
-    const { groupId, expenseId } = Number(req.params);
+    const { groupId, expenseId } = req.params;
     const { userIds } = req.body;
 
     const splits = await splitExpense({
@@ -34,7 +34,7 @@ async function splitExpenseController(req, res) {
       splits,
     });
   } catch (error) {
-    console.error("Split error:", error);
+    console.error("Split:", error);
 
     return res.status(404).json({
       message: "Expense split failed",

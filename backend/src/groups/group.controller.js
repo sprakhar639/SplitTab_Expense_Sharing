@@ -1,4 +1,4 @@
-import { createGroup} from "./group.service.js";
+import { createGroup,addMember} from "./group.service.js";
 
 async function create(req, res) {
   try {
@@ -23,7 +23,7 @@ async function addMemberController(req, res) {
 
     const member = await addMember({
       groupId: Number(groupId),
-      userId: userIds,
+      userIds,
     });
 
     return res.status(201).json({

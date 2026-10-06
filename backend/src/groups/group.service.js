@@ -9,14 +9,14 @@ async function createGroup({ name }) {
 async function addMember({ groupId, userIds }) {
   const members = [];
 
-  for (const UserId of userIds) {
+  for (const userId of userIds) {
     const member = await db.orm.public.GroupMember.create({
       groupId,
-      userId,
+      userId:Number(userId),
       role: "MEMBER",
     });
-    member.push(member);
+    members.push(member);
   }
-  return member;
+  return members;
 }
-export { createGroup };
+export { createGroup,addMember };
