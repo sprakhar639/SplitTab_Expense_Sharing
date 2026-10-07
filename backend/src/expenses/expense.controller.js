@@ -3,18 +3,18 @@ import { addExpense, splitExpense } from "../expenses/expense.service.js";
 async function addExpenseInGroup(req, res) {
   try {
     const { groupId } = req.params;
-    const { amount, paidBy, description } = req.body;
+    const { amount, description } = req.body;
     const expense = await addExpense({
-      groupId,
+      groupId: Number(groupId),
       amount,
-      paidBy,
+      paidBy: req.user.id,
       description,
     });
     return res
       .status(201)
-      .json({ message: "Expense added Successfully", expense });
+      .json({ message: "Expense Added Successfully", expense });
   } catch (error) {
-    console.error("Expense Add Error", error);
+    console.error("Create Expense Error", error);
     return res.status(405).json({ message: "Failed to add expense" });
   }
 }
@@ -22,22 +22,22 @@ async function addExpenseInGroup(req, res) {
 async function splitExpenseController(req, res) {
   try {
     const { groupId, expenseId } = req.params;
-    const { userIds } = req.body;
+    const { splits } = req.body;
 
-    const splits = await splitExpense({
+    const result = await splitExpense({
       expenseId: Number(expenseId),
       groupId: Number(groupId),
-      userIds,
+      splits,
     });
     return res.status(201).json({
       message: "Expense split successfully",
-      splits,
+      splits: result,
     });
   } catch (error) {
-    console.error("Split:", error);
+    console.error("Split Expense Error:", error);
 
     return res.status(404).json({
-      message: "Expense split failed",
+      message: error.message,
     });
   }
 }

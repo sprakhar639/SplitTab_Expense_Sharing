@@ -1,6 +1,11 @@
 import db from "../prisma/db.ts";
+const { Expense, ExpenseSplit } = db.orm.public;
+import { and } from "@prisma/orm-postgres/orm-client";
 
 async function addExpense({ groupId, amount, paidBy, description }) {
+  if (!amount || amount <= 0) {
+    throw new Error("Amountmust be greater than 0");
+  }
   const expense = await db.orm.public.Expense.create({
     groupId,
     amount,
@@ -10,30 +15,72 @@ async function addExpense({ groupId, amount, paidBy, description }) {
   return expense;
 }
 
-async function splitExpense({ expenseId,groupId,userIds}) {
-  const expense = await db.orm.public.Expense.where((e) =>
-    e.id.eq(expenseId),
-  ).first();
+async function splitExpense({ expenseId, groupId, splits }) {
+  
+  // Validate Split
+  if (!Array.isArray(splits) || splits.length === 0) {
+    throw new Error("Atleast one split is required");
+  }
+
+  // Find the Expense
+  const expense = await Expense.findFirst({
+    where: (e) => and(e.id.eq(expenseId), e.groupId.eq(groupId)),
+  });
 
   if (!expense) {
     throw new Error("Expense Not Found");
   }
 
-  if (expense.groupId !== groupId) {
-    throw new Error("Expense does not belong to this group");
-  }
-  const splitAmount = expense.amount / userIds.length;
+  //  Checking Duplicate participants
+  const userIds = splits.map((split) => Number(split.userId));
 
-  const splits = [];
-  for (const userId of userIds) {
-    const split = await db.orm.public.ExpenseSplit.create({
-      expenseId,
-      userId,
-      amount: splitAmount,
-    });
-    splits.push(split);
+  if (new Set(userIds).size !== userIds.length) {
+    throw new Error("A participant cannot appear more than");
   }
-  return splits;
+
+  //   Check every split amount
+  for (const split of splits) {
+    if (Number(split.amount) <= 0) {
+      throw new Error("Split amount must be greater than 0");
+    }
+  }
+
+  //   Check total split amount
+  const totalSplit = splits.reduce(
+    (total, split) => total + Number(split.amount),
+    0,
+  );
+
+  if (totalSplit !== expense.amount) {
+    throw new Error("Split amounts must equal the expense amount");
+  }
+
+  //  Create all splits in one transaction
+  return await db.transaction(async (tx) => {
+    const createdSplits = [];
+
+    for (const split of splits) {
+      const userId = Number(split.userId);
+
+      //   Participant must already be a group member
+      const member = await tx.GroupMember.findFirst({
+        where: (gm) => and(gm.groupId.eq(groupId), gm.userId.eq(userId)),
+      });
+
+      if (!member) {
+        throw new Error(`User ${userId} is not a member of this group`);
+      }
+
+      //    Create ExpenseSplit
+      const expenseSplit = await tx.ExpenseSplit.create({
+        expenseId,
+        userId,
+        amount: Number(split.amount),
+      });
+      createdSplits.push(expenseSplit);
+    }
+    return createdSplits;
+  });
 }
 
 export { addExpense, splitExpense };
