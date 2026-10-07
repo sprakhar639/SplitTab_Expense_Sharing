@@ -3,7 +3,9 @@ import { createGroup,addMember} from "./group.service.js";
 async function create(req, res) {
   try {
     const { name } = req.body;
-    const group = await createGroup({ name });
+    const group = await createGroup({ 
+      name,userId:req.user.id 
+    });
 
     return res
       .status(201)
@@ -24,6 +26,7 @@ async function addMemberController(req, res) {
     const member = await addMember({
       groupId: Number(groupId),
       userIds,
+      requesterId:req.user.id,
     });
 
     return res.status(201).json({

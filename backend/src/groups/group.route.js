@@ -8,7 +8,7 @@ const router = Router();
 router.post("/create", authMiddleware, create);
 
 router.post(
-  "/:groupId/members",addMemberController,
+  "/:groupId/members",authMiddleware,addMemberController,
 );
 
 export default router;
