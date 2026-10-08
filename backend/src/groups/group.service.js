@@ -41,4 +41,33 @@ async function addMember({ groupId, userIds, requesterId }) {
     return members;
   });
 }
-export { createGroup, addMember };
+
+async function removeMember({ groupId, userId, requestedId }) {
+  return await db.transaction(async (tx) => {
+    const requester = await tx.GroupMember.FindFirst({
+      where: (gm) => and(gm.groupId.eq(groupId), gm.userId.eq(requestedId)),
+    });
+
+    if (!requester) {
+      throw new Error("You are not a member of this group");
+    }
+
+    if (requester.role !== "ADMIN") {
+      throw new Error("Only group admin can remove members");
+    }
+
+    const member = await tx.GroupMember.FindFirst({
+      where: (gm) => and(gm.groupId.eq(groupId), gm.userId.eq(userId)),
+    });
+
+    if (!member) {
+      throw new Error("User is not a member of this group");
+    }
+
+    await tx.GroupMember.delete({
+      where: (gm) => and(gm.groupId.eq(groupId), gm.userId.eq(userId)),
+    });
+    return member;
+  });
+}
+export { createGroup, addMember, removeMember };

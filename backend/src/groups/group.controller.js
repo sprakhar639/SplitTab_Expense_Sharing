@@ -1,10 +1,11 @@
-import { createGroup,addMember} from "./group.service.js";
+import { createGroup, addMember ,removeMember} from "./group.service.js";
 
 async function create(req, res) {
   try {
     const { name } = req.body;
-    const group = await createGroup({ 
-      name,userId:req.user.id 
+    const group = await createGroup({
+      name,
+      userId: req.user.id,
     });
 
     return res
@@ -26,7 +27,7 @@ async function addMemberController(req, res) {
     const member = await addMember({
       groupId: Number(groupId),
       userIds,
-      requesterId:req.user.id,
+      requesterId: req.user.id,
     });
 
     return res.status(201).json({
@@ -42,4 +43,22 @@ async function addMemberController(req, res) {
   }
 }
 
-export { create,addMemberController };
+async function removeMemberController(req, res) {
+  try {
+    const { groupId, userId } = req.params;
+
+    await removeMember({
+      groupId: Number(groupId),
+      userId: Number(userId),
+      requesterId: req.user.id,
+    });
+
+    return res.status(200).json({ message: "Member removed Successfully" });
+  } catch (error) {
+    console.error("Remove Member Error:", error);
+
+    return res.status(400).json({ message: error.message });
+  }
+}
+
+export { create, addMemberController,removeMemberController };
