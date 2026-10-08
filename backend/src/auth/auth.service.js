@@ -1,28 +1,30 @@
 import bcrpyt from "bcrypt";
-import crypto from "crypto"
+import crypto from "crypto";
 import db from "../prisma/db.ts";
 import { or } from "@prisma/orm-postgres/orm-client";
+const { User, Session } = db.orm.public;
 
 async function register({ username, email, password, name }) {
   try {
     const passwordHash = await bcrpyt.hash(password, 10);
-    const user = await db.orm.public.User.create({
+    const user = await User.create({
       email,
       username,
       name,
       passwordHash,
     });
 
-  const sessionToken=crypto.randomBytes(32).toString("hex");
-  const tokenHash=crypto.createHash("sha256").update(sessionToken).digest("hex");
+    const sessionToken = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto
+      .createHash("sha256")
+      .update(sessionToken)
+      .digest("hex");
 
-    const session = await db.orm.public.Session.create({
-      userId:user.id,
+    const session = await Session.create({
+      userId: user.id,
       tokenHash,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
-
-   
 
     return { user, sessionToken };
   } catch (error) {
@@ -31,36 +33,40 @@ async function register({ username, email, password, name }) {
 }
 
 async function login({ identifier, password }) {
-  try{
-  const user = await db.orm.public.User.where((u) =>
-    or(u.email.eq(identifier), u.username.eq(identifier)),
-  ).first();
+  try {
+    const user = await User.where((u) =>
+      or(u.email.eq(identifier), u.username.eq(identifier)),
+    ).first();
 
-  if (!user) {
-    throw new Error("User Not Found");
+    if (!user) {
+      throw new Error("User Not Found");
+    }
+
+    const passwordMatch = await bcrpyt.compare(password, user.passwordHash);
+
+    if (!passwordMatch) {
+      throw new Error("Wrong Password");
+    }
+
+    const sessionToken = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto
+      .createHash("sha256")
+      .update(sessionToken)
+      .digest("hex");
+
+    const session = await Session.create({
+      userId: user.id,
+      tokenHash,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+    return { user, sessionToken };
+  } catch (error) {
+    console.error("error", error);
+    throw error;
   }
-
-  const passwordMatch = await bcrpyt.compare(password, user.passwordHash);
-
-  if (!passwordMatch) {
-    throw new Error("Wrong Password");
-  }
-
-  const sessionToken=crypto.randomBytes(32).toString("hex");
-  const tokenHash=crypto.createHash("sha256").update(sessionToken).digest("hex");
-
-  const session=await db.orm.public.Session.create({
-    userId:user.id,
-    tokenHash,
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-  })
-  return {user,sessionToken};
-}
-catch(error){
-  console.error("error",error);
-  throw error;
-}
 }
 
-async function logout() {}
+async function logout() {
+  console.log("Hello");
+}
 export { register, login, logout };
