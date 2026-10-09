@@ -84,3 +84,5 @@ async function splitExpense({ expenseId, groupId, splits }) {
 }
 
 export { addExpense, splitExpense };
+
+

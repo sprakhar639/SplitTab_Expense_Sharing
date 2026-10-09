@@ -2,7 +2,7 @@ import app from './src/app.js'
 import connectDB from './db/db.js'
 
 async function startServer(){
-    connectDB();
+   await connectDB();
 
     app.listen(3000,()=>{
         console.log("Server running on Port 3000")

@@ -26,7 +26,7 @@ async function register({ username, email, password, name }) {
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
-    return { user, sessionToken };
+    return { sessionToken };
   } catch (error) {
     console.error("error message", error);
   }
@@ -59,14 +59,18 @@ async function login({ identifier, password }) {
       tokenHash,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
-    return { user, sessionToken };
+    return { sessionToken };
   } catch (error) {
     console.error("error", error);
     throw error;
   }
 }
 
-async function logout() {
-  console.log("Hello");
+async function logout(sessionId) {
+  const hashSession = crypto
+    .createHash("sha256")
+    .update(sessionId)
+    .digest("hex");
+  await Session.where((u) => u.tokenHash.eq(hashSession)).delete();
 }
 export { register, login, logout };
